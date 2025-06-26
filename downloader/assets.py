@@ -3,26 +3,31 @@ AssetManager: download, dedupe & classify assets.
 """
 
 from __future__ import annotations
-import hashlib, mimetypes, os
+
+import hashlib
+import mimetypes
+import os
 from pathlib import Path
 from urllib.parse import urlparse
-from config.settings import BACKUP_ROOT, AD_HOSTS, MAX_ASSET_KB
-from utils.files       import safe_file_write
-from core.state        import State
+
+from config.settings import AD_HOSTS, BACKUP_ROOT, MAX_ASSET_KB
+from core.state import State
+from utils.files import safe_file_write
 
 IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".bmp", ".ico"}
+
 
 class AssetManager:
     def __init__(self, fetcher, state: State):
         self.fetcher = fetcher
         self.state = state
-        self.dst_img = Path(BACKUP_ROOT)/"assets"/"imagens"/"internal"
-        self.dst_file= Path(BACKUP_ROOT)/"assets"/"files"/"internal"
-        self.dst_ext = Path(BACKUP_ROOT)/"external_files"
+        self.dst_img = Path(BACKUP_ROOT) / "assets" / "imagens" / "internal"
+        self.dst_file = Path(BACKUP_ROOT) / "assets" / "files" / "internal"
+        self.dst_ext = Path(BACKUP_ROOT) / "external_files"
         for p in (self.dst_img, self.dst_file, self.dst_ext):
             p.mkdir(parents=True, exist_ok=True)
 
-    async def fetch(self, url: str, kind_hint: str="") -> str | None:
+    async def fetch(self, url: str, kind_hint: str = "") -> str | None:
         host = urlparse(url).netloc.lower()
         if host in AD_HOSTS:
             return None

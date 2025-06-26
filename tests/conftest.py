@@ -1,5 +1,5 @@
-import pytest, tempfile, shutil, os
-from pathlib import Path
+import pytest
+
 
 @pytest.fixture
 def tmp_root(tmp_path):

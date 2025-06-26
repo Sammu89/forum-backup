@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-import os
-import ast
 import argparse
+import ast
+import os
 import sys
+
 
 def extract_docstrings_from_file(filepath):
     """
@@ -25,14 +26,17 @@ def extract_docstrings_from_file(filepath):
                 sig = f"({', '.join(args)})"
             else:
                 sig = ""
-            docs.append({
-                "type": obj_type,
-                "name": name,
-                "signature": sig,
-                "lineno": lineno,
-                "docstring": doc.strip()
-            })
+            docs.append(
+                {
+                    "type": obj_type,
+                    "name": name,
+                    "signature": sig,
+                    "lineno": lineno,
+                    "docstring": doc.strip(),
+                }
+            )
     return docs
+
 
 def scan_project(base_path):
     """
@@ -49,6 +53,7 @@ def scan_project(base_path):
                 if docs:
                     result[rel] = docs
     return result
+
 
 def generate_markdown(project_map, title=None):
     """
@@ -69,6 +74,7 @@ def generate_markdown(project_map, title=None):
                 print("  *(no docstring)*")
         print("")  # blank line between files
 
+
 def main():
     # default output filename: <current_folder>_docstrings.md
     default_output = f"{os.path.basename(os.getcwd())}_docstrings.md"
@@ -80,16 +86,16 @@ def main():
         "project_root",
         nargs="?",
         default=os.getcwd(),
-        help="Path to the root folder of your Python project (defaults to current directory)"
+        help="Path to the root folder of your Python project (defaults to current directory)",
     )
     parser.add_argument(
-        "-o", "--output",
+        "-o",
+        "--output",
         default=default_output,
-        help="Write Markdown to this file (defaults to '<current_folder>_docstrings.md')"
+        help="Write Markdown to this file (defaults to '<current_folder>_docstrings.md')",
     )
     parser.add_argument(
-        "-t", "--title",
-        help="Optional title for the Markdown document"
+        "-t", "--title", help="Optional title for the Markdown document"
     )
     args = parser.parse_args()
 
@@ -104,6 +110,7 @@ def main():
         print(f"Markdown written to {args.output}")
     else:
         generate_markdown(project_map, title=args.title)
+
 
 if __name__ == "__main__":
     main()

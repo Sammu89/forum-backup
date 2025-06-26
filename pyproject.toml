@@ -1,0 +1,39 @@
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+include = '\.pyi?$'
+exclude = '''
+/(
+  \.git
+ | \.venv
+ | build
+ | dist
+)/
+'''
+
+
+[tool.ruff]
+line-length = 88
+lint.select = ["E", "F", "I", "B", "C"]   # errors, flake8, imports, best practices
+lint.ignore = ["E501"]                    # Black handles line-length
+exclude = ["venv", "build", "dist"]
+
+
+[tool.isort]
+profile = "black"
+line_length = 88
+multi_line_output = 3
+include_trailing_comma = true
+known_first_party = ["config","core","crawler","downloader","processor","cli","utils"]
+
+
+[tool.mypy]
+python_version = "3.10"
+check_untyped_defs = false
+disallow_untyped_defs = false
+ignore_missing_imports = true
+disable_error_code = [
+  "attr-defined",
+  "call-arg",
+  "misc",
+]

@@ -3,18 +3,26 @@ Phase-1: discover links and save raw HTML.
 """
 
 from __future__ import annotations
-import asyncio, traceback
-from urllib.parse import urljoin, urlparse, parse_qsl
+
+import asyncio
+
+# log
+import logging
+import traceback
+from urllib.parse import parse_qsl, urljoin, urlparse
+
 from bs4 import BeautifulSoup
 
-from core.pathutils   import url_to_local_path
-from core.redirects   import redirects
-from core.state       import State, REL, REDIR, STA, RETRY, ERR
-from config.settings  import BASE_URL, BASE_DOMAIN, IGNORED_PREFIXES, BLACKLIST_PARAMS
-from utils.files      import safe_file_write
+from config.settings import BASE_DOMAIN, BASE_URL, BLACKLIST_PARAMS, IGNORED_PREFIXES
+from core.pathutils import url_to_local_path
+from core.redirects import redirects
+from core.state import State
+from utils.files import safe_file_write
+
 
 def _strip_fragment(url: str) -> str:
     return url.split("#", 1)[0]
+
 
 def _is_valid_link(href: str) -> bool:
     if href.startswith(("mailto:", "javascript:", "#")):
@@ -31,11 +39,15 @@ def _is_valid_link(href: str) -> bool:
             return False
     return True
 
+
 def _path_plus_query(url: str) -> str:
     p = urlparse(url)
     return p.path + (f"?{p.query}" if p.query else "")
 
-async def handle_redirect(worker_id: int, src_url: str, dst_url: str, state: State) -> bool:
+
+async def handle_redirect(
+    worker_id: int, src_url: str, dst_url: str, state: State
+) -> bool:
     """
     Record an internal redirect and enqueue the destination.
     """
@@ -49,8 +61,10 @@ async def handle_redirect(worker_id: int, src_url: str, dst_url: str, state: Sta
     state.mark_redirect_source(src)
     rel = url_to_local_path(dst)
     state.add_url(dst, rel)
-    print(f"[Redirect] {src} → {dst}")
+    # print(f"[Redirect] {src} → {dst}")
+    logging.info("[Redirect] %s → %s", src, dst)
     return True
+
 
 class LinkDiscoverer:
     """
@@ -66,7 +80,7 @@ class LinkDiscoverer:
     async def run(self):
         idle = 0
         while True:
-            path = await self.state.get_next("discover")
+            path = self.state.get_next("discover")
             if not path:
                 idle += 1
                 if idle > 15:
@@ -79,11 +93,18 @@ class LinkDiscoverer:
     async def _process(self, path: str):
         url = urljoin(BASE_URL, path)
         try:
-            status, html, final = await self.fetcher.fetch_text(url, allow_redirects=False)
-            if status in (301, 302) and await handle_redirect(self.id, url, final, self.state):
+            status, html, final = await self.fetcher.fetch_text(
+                url, allow_redirects=False
+            )
+            if status in (301, 302) and await handle_redirect(
+                self.id, url, final, self.state
+            ):
                 return
 
             if status != 200 or not html:
+                import logging
+
+                logging.error("[D%s] %s  -> HTTP %s", self.id, path, status)
                 self.state.update_after_fetch(path, False, f"HTTP {status}")
                 return
 
@@ -92,7 +113,8 @@ class LinkDiscoverer:
 
             count = await self._parse_links(html)
             self.state.mark_discovered(path)
-            print(f"[D{self.id}] {path} → +{count} links")
+            # print(f"[D{self.id}] {path} → +{count} links")
+            logging.debug("[D%s] %s → +%s links", self.id, path, count)
 
         except Exception:
             traceback.print_exc()

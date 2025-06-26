@@ -3,23 +3,33 @@
 Entry-point for Forum-Mirror CLI.
 Usage: python -m cli
 """
+
 from __future__ import annotations
-import argparse, asyncio, sys, shutil, os, platform, subprocess
+
+# ─── Early logging setup ────────────────────────────────────────────────────
+from utils.logging import setup as log_setup
+
+log_setup("DEBUG")
+
+# ─── Standard library imports ───────────────────────────────────────────────
+import asyncio
+import os
+import platform
+import shutil
+import subprocess
+import sys
 from pathlib import Path
 
-# Setup logging early if desired
-# from utils.logging import setup
-# setup("INFO")
-
-# Local imports (once config is initialized)
+# ─── Third-party & local imports ────────────────────────────────────────────
 import config.settings as settings
-from config.settings import init as init_settings
 from cli.auth import handle_authentication
-from core.fetcher import Fetcher
-from core.throttle import ThrottleController
-from core.state import State
-from crawler.scheduler import run_discovery_phase, run_download_phase
+from config.settings import init as init_settings
 from core.adblock import update_hosts
+from core.fetcher import Fetcher
+from core.state import State
+from core.throttle import ThrottleController
+from crawler.scheduler import run_discovery_phase, run_download_phase
+
 
 # ─────────────────────────────────────────────────────────────
 # UI Helpers
@@ -27,11 +37,11 @@ from core.adblock import update_hosts
 def prompt_forum_and_folder(last_url: str | None = None) -> tuple[str, Path]:
     default_url = last_url or "https://sm-portugal.forumeiros.com/"
     forum = input(f"🎯 Target Forum: (default {default_url}): ").strip() or default_url
-    if not forum.startswith(("http://","https://")):
+    if not forum.startswith(("http://", "https://")):
         forum = "https://" + forum.lstrip("/")
     forum = forum.rstrip("/")
 
-    domain = forum.split("//",1)[1].split("/",1)[0]
+    domain = forum.split("//", 1)[1].split("/", 1)[0]
     slug = domain.split(".")[0]
     desktop = Path.home() / "Desktop"
     default_dir = desktop / slug
@@ -39,6 +49,7 @@ def prompt_forum_and_folder(last_url: str | None = None) -> tuple[str, Path]:
     backup_root = Path(out).expanduser() if out else default_dir
     backup_root.mkdir(parents=True, exist_ok=True)
     return forum, backup_root
+
 
 # ─────────────────────────────────────────────────────────────
 # Main
@@ -55,18 +66,19 @@ async def main():
         shutil.copy(src, yaml_path)
         print(f"📝 Created settings file at {yaml_path}. Edit as needed.")
         if input("Open it now? (y/N): ").lower() == "y":
-            editor = os.environ.get("EDITOR") or ("notepad" if platform.system()=="Windows" else "nano")
+            editor = os.environ.get("EDITOR") or (
+                "notepad" if platform.system() == "Windows" else "nano"
+            )
             subprocess.call([editor, str(yaml_path)])
     # lock to prevent mid-run edits
     (backup_root / "settings.yaml.lock").write_text("")
-
-    init_settings(backup_root, yaml_path)
+    init_settings(backup_root, yaml_path, forum_url)
 
     # 3) Load adblock hosts
     await update_hosts(backup_root)
 
     # 4) Authenticate
-    cookies, logged_in = await handle_authentication()
+    cookies, logged_in = await handle_authentication(backup_root, forum_url)
     if not logged_in:
         print("⚠️  Continuing as anonymous user.")
 
@@ -93,6 +105,7 @@ async def main():
     await fetcher.close()
     shutil.copy(state_file, backup_root / "crawl_state_final.json")
     print("🎉 Backup complete! Open index.html in the backup folder to browse offline.")
+
 
 if __name__ == "__main__":
     try:

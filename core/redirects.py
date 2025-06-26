@@ -1,5 +1,8 @@
-import os, json, asyncio
-from typing import Dict, Optional
+import asyncio
+import json
+import os
+from typing import Dict
+
 
 class RedirectMap:
     """
@@ -9,7 +12,7 @@ class RedirectMap:
 
     def __init__(self, filename: str = "redirects.json"):
         self.path = os.path.join(os.getcwd(), filename)
-        self.map: Dict[str,str] = {}
+        self.map: Dict[str, str] = {}
         self._lock = asyncio.Lock()
         self._load()
 
@@ -19,11 +22,11 @@ class RedirectMap:
                 data = json.load(f)
                 if isinstance(data, dict):
                     self.map = data
-        except:
+        except (json.JSONDecodeError, IOError):
             self.map = {}
 
     async def add(self, src: str, dst: str):
-        if not src or not dst or src==dst or self.map.get(src)==dst:
+        if not src or not dst or src == dst or self.map.get(src) == dst:
             return
         async with self._lock:
             self.map[src] = dst
@@ -38,10 +41,11 @@ class RedirectMap:
         visited = set()
         cur = path
         depth = 0
-        while cur in self.map and cur not in visited and depth<16:
+        while cur in self.map and cur not in visited and depth < 16:
             visited.add(cur)
             cur = self.map[cur]
             depth += 1
         return cur
+
 
 redirects = RedirectMap()

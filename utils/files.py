@@ -3,8 +3,12 @@ Atomic file I/O helpers.
 """
 
 from __future__ import annotations
-import asyncio, os, tempfile
+
+import asyncio
+import os
+import tempfile
 from pathlib import Path
+
 
 async def safe_file_write(path: str | Path, data: str | bytes, mode: str = "w") -> bool:
     try:
@@ -19,8 +23,11 @@ async def safe_file_write(path: str | Path, data: str | bytes, mode: str = "w") 
         print(f"[FileWrite] {e}")
         return False
 
+
 async def safe_file_read(path: str | Path, mode: str = "r"):
     try:
-        return await asyncio.to_thread(Path(path).read_text if "b" not in mode else Path(path).read_bytes)
+        return await asyncio.to_thread(
+            Path(path).read_text if "b" not in mode else Path(path).read_bytes
+        )
     except Exception:
         return None

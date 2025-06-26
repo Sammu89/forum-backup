@@ -1,8 +1,10 @@
-import os
 from pathlib import Path
 from urllib.parse import urlparse
+
 from slugify import slugify
-from config.settings import FOLDER_MAPPING, SLUG_MAX_LEN, BACKUP_ROOT
+
+from config.settings import BACKUP_ROOT, FOLDER_MAPPING, SLUG_MAX_LEN
+
 
 def url_to_local_path(url: str) -> str:
     """
@@ -23,7 +25,7 @@ def url_to_local_path(url: str) -> str:
     slug = "_".join(slugged)
     if parsed.query:
         q = parsed.query.replace("=", "-").replace("&", "_")
-        slug += "_" + slug
+        slug += "_" + slug + q
 
     # choose folder
     key = segments[0]

@@ -1,9 +1,12 @@
-import json, asyncio, tempfile, os
-import ijson
+import asyncio
+import json
+import os
+import tempfile
 
 # record indices
-REL, REDIR, STA, RETRY, ERR = 0,1,2,3,4
+REL, REDIR, STA, RETRY, ERR = 0, 1, 2, 3, 4
 DEFAULT_REC = ["", 0, "l", 0, ""]
+
 
 class State:
     """
@@ -26,13 +29,13 @@ class State:
         try:
             with open(self.state_path, "r", encoding="utf-8") as f:
                 self.urls = json.load(f)
-        except:
+        except (json.JSONDecodeError, IOError):
             self.urls = {}
         # load assets
         try:
             with open(self.cache_path, "r", encoding="utf-8") as f:
                 self.assets = json.load(f)
-        except:
+        except (json.JSONDecodeError, IOError):
             self.assets = {}
 
     async def save(self):
@@ -56,14 +59,14 @@ class State:
 
     def get_next(self, phase: str) -> str | None:
         # phase="discover" -> status "l"; "download"->"d"
-        want = "l" if phase=="discover" else "d"
-        for k,v in self.urls.items():
+        want = "l" if phase == "discover" else "d"
+        for k, v in self.urls.items():
             if v[STA] == want:
                 return k
         return None
 
     def pending_count(self) -> int:
-        return sum(1 for v in self.urls.values() if v[STA] in ("l","d"))
+        return sum(1 for v in self.urls.values() if v[STA] in ("l", "d"))
 
     def mark_discovered(self, path: str):
         rec = self.urls[path]
@@ -78,7 +81,7 @@ class State:
         rec[REDIR] = 1
         rec[STA] = "e"
 
-    def update_after_fetch(self, path: str, success: bool, err: str=""):
+    def update_after_fetch(self, path: str, success: bool, err: str = ""):
         rec = self.urls[path]
         if success:
             rec[STA] = "d"

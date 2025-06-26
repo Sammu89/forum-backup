@@ -2,14 +2,16 @@
 Coordinate HTML rewriting: assets, links, future optimizations.
 """
 
-import asyncio, pathlib
+import pathlib
+
 from bs4 import BeautifulSoup
 
-from downloader.assets      import AssetManager
-from processor.rewrite.links    import rewrite_links
-from processor.rewrite.assets   import _rewrite_head, _rewrite_body_assets
-from core.pathutils         import url_to_local_path
-from core.state             import State
+from core.pathutils import url_to_local_path
+from core.state import State
+from downloader.assets import AssetManager
+from processor.rewrite.assets import _rewrite_body_assets, _rewrite_head
+from processor.rewrite.links import rewrite_links
+
 
 async def process_html(page_url: str, html: str, fetcher, state: State) -> str:
     """
@@ -30,4 +32,5 @@ async def process_html(page_url: str, html: str, fetcher, state: State) -> str:
     rewrite_links(soup, str(out_path), state)
     # future hook
     from processor.optimize.htmlmin import run as _opt_run
+
     return _opt_run(str(soup))

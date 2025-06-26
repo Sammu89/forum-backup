@@ -2,14 +2,15 @@
 Phase-2: fetch HTML, rewrite via processor, save final.
 """
 
-import asyncio, traceback
-from urllib.parse        import urljoin
-from core.pathutils      import url_to_local_path
-from core.redirects      import redirects
-from utils.files         import safe_file_write
-from core.state          import State
+import traceback
+from urllib.parse import urljoin
+
+from core.pathutils import url_to_local_path
+from core.state import State
+from crawler.discover import handle_redirect
 from processor.orchestrator import process_html
-from crawler.discover    import handle_redirect
+from utils.files import safe_file_write
+
 
 class DownloadWorker:
     def __init__(self, cfg, state: State, fetcher, wid=1, progress=None):
@@ -21,7 +22,7 @@ class DownloadWorker:
 
     async def run(self):
         while True:
-            path = await self.state.get_next("download")
+            path = self.state.get_next("download")
             if not path:
                 break
             await self._process(path)

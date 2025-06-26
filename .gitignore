@@ -7,13 +7,25 @@ desktop.ini
 *.tmp 
 *.temp 
 *.log 
+*.docx
+*.pdf
+*.md
+Commit.bat
+Doctstrings.py
+Mapeador.py
+Mapeador.py
+cookies.json
+crawl_state.json
+assets_cache.json
  
 # Python 
 __pycache__/ 
 *.pyc 
-*.pyo 
+*.pyo
+
  
 # Dependency folders 
 node_modules/ 
 vendor/ 
- 
+.ruff_cache/
+.mypy_cache/

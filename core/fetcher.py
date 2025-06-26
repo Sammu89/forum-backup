@@ -1,6 +1,8 @@
-import aiohttp, asyncio
+from typing import Optional, Tuple
+
+import aiohttp
 from aiohttp import ClientTimeout, TCPConnector
-from typing import Tuple, Optional
+
 
 class Fetcher:
     """
@@ -23,27 +25,43 @@ class Fetcher:
             connector = TCPConnector(
                 limit=self.cfg.workers * 2,
                 limit_per_host=4,
-                enable_http2=True,
             )
-            headers = {"User-Agent": self.cfg.user_agent}
+            headers = {"User-Agent": self.cfg.USER_AGENT}
             self.session = aiohttp.ClientSession(
                 timeout=timeout,
                 connector=connector,
                 headers=headers,
                 cookies=self.cookies,
             )
+            assert self.session is not None
 
-    async def fetch_text(self, url: str, allow_redirects: bool = True) -> Tuple[int, Optional[str], str]:
+    async def fetch_text(
+        self, url: str, allow_redirects: bool = True
+    ) -> Tuple[int, Optional[str], str]:
         """
         Fetch text content from URL. Returns (status, text, final_url).
         """
         await self._ensure_session()
+        import logging
+        logging.info("→ [FETCH-TEXT] %s", url)
         await self.throttle.before_request()
         try:
             async with self.session.get(url, allow_redirects=allow_redirects) as resp:
                 status = resp.status
                 final = str(resp.url)
                 text = await resp.text(errors="ignore")
+
+                # Debug info, to delete
+                logging.debug(
+                    "GET  %s  -> %s %s  (UA:%s)",
+                    url,
+                    status,
+                    resp.reason,
+                    self.session.headers.get("User-Agent"),
+                )
+                if status >= 400:
+                    logging.debug("Response headers: %s", dict(resp.headers))
+
         except Exception:
             status, text, final = 500, None, url
         finally:
@@ -55,6 +73,8 @@ class Fetcher:
         Fetch binary content. Returns (status, data).
         """
         await self._ensure_session()
+        import logging
+        logging.info("→ [FETCH-TEXT] %s", url)
         await self.throttle.before_request()
         try:
             async with self.session.get(url, allow_redirects=True) as resp:

@@ -1,0 +1,19 @@
+# System files 
+.DS_Store 
+Thumbs.db 
+desktop.ini 
+ 
+# Temporary files 
+*.tmp 
+*.temp 
+*.log 
+ 
+# Python 
+__pycache__/ 
+*.pyc 
+*.pyo 
+ 
+# Dependency folders 
+node_modules/ 
+vendor/ 
+ 

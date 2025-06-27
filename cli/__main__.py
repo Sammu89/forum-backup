@@ -91,6 +91,7 @@ async def main():
     # 6) Handle resume, reset, status prompts (could add flags later)
     if not state.urls:
         state.add_url("/", "index.html")
+        await state.save()
 
     # 7) Setup fetcher & throttle
     throttle = ThrottleController(settings)

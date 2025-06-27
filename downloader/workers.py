@@ -7,7 +7,6 @@ from urllib.parse import urljoin
 
 from core.pathutils import url_to_local_path
 from core.state import State
-from crawler.discover import handle_redirect
 from processor.orchestrator import process_html
 from utils.files import safe_file_write
 
@@ -22,7 +21,7 @@ class DownloadWorker:
 
     async def run(self):
         while True:
-            path = self.state.get_next("download")
+            path = await self.state.get_next("download")
             if not path:
                 break
             await self._process(path)
@@ -31,6 +30,10 @@ class DownloadWorker:
         url = urljoin(self.cfg.base_url, path)
         try:
             status, html, final = await self.fetcher.fetch_text(url)
+
+            # Import inside the method to avoid circular import
+            from crawler.discover import handle_redirect
+
             if final != url and await handle_redirect(self.id, url, final, self.state):
                 return
             if status != 200 or not html:

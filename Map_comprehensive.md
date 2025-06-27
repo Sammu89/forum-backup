@@ -33,8 +33,8 @@ PROJECT_ROOT/
 │   │   └── ⚡ _fetch_and_cache 🟢 (line 12, complexity: 3)
 │   │   └── ⚡ update_hosts 🟢 (line 23, complexity: 4)
 │   │   └── ⚙️ is_blocked_host 🟢 (line 40, complexity: 1)
-│   ├── 📃 fetcher.py 🟢 (94 lines, complexity: 0)
-│   │   ├── 🏛️ Fetcher (line 7, 1 methods)
+│   ├── 📄 fetcher.py 🟢 (153 lines, complexity: 0)
+│   │   ├── 🏛️ Fetcher (line 10, 1 methods)
 │   ├── 📃 pathutils.py 🟢 (43 lines, complexity: 0)
 │   │   └── ⚙️ url_to_local_path 🟢 (line 9, complexity: 4)
 │   ├── 📃 redirects.py 🟢 (51 lines, complexity: 0)
@@ -44,20 +44,20 @@ PROJECT_ROOT/
 │   └── 📃 throttle.py 🟢 (40 lines, complexity: 0)
 │       ├── 🏛️ ThrottleController (line 4, 2 methods)
 ├── 📁 crawler
-│   ├── 📄 discover.py 🟢 (133 lines, complexity: 0)
-│   │   ├── 🏛️ LinkDiscoverer (line 67, 1 methods)
-│   │   └── ⚙️ _strip_fragment 🟢 (line 21, complexity: 1)
-│   │   └── ⚙️ _is_valid_link 🟡 (line 25, complexity: 7)
-│   │   └── ⚙️ _path_plus_query 🟢 (line 41, complexity: 1)
-│   │   └── ⚡ handle_redirect 🟢 (line 46, complexity: 4)
-│   └── 📃 scheduler.py 🟢 (27 lines, complexity: 0)
-│       └── ⚡ run_discovery_phase 🟢 (line 11, complexity: 4)
+│   ├── 📄 discover.py 🟢 (123 lines, complexity: 0)
+│   │   ├── 🏛️ LinkDiscoverer (line 65, 1 methods)
+│   │   └── ⚙️ _strip_fragment 🟢 (line 20, complexity: 1)
+│   │   └── ⚙️ _is_valid_link 🟡 (line 24, complexity: 7)
+│   │   └── ⚙️ _path_plus_query 🟢 (line 40, complexity: 1)
+│   │   └── ⚡ handle_redirect 🟢 (line 45, complexity: 4)
+│   └── 📃 scheduler.py 🟢 (30 lines, complexity: 0)
+│       └── ⚡ run_discovery_phase 🟢 (line 8, complexity: 4)
 │       └── ⚡ run_download_phase 🟢 (line 23, complexity: 1)
 ├── 📁 downloader
 │   ├── 📃 assets.py 🟢 (58 lines, complexity: 0)
 │   │   ├── 🏛️ AssetManager (line 20, 2 methods)
-│   └── 📃 workers.py 🟢 (47 lines, complexity: 0)
-│       ├── 🏛️ DownloadWorker (line 15, 1 methods)
+│   └── 📃 workers.py 🟢 (50 lines, complexity: 0)
+│       ├── 🏛️ DownloadWorker (line 14, 1 methods)
 ├── 📁 processor
 │   ├── 📃 orchestrator.py 🟢 (36 lines, complexity: 0)
 │   │   └── ⚡ process_html 🟢 (line 16, complexity: 1)
@@ -89,7 +89,7 @@ PROJECT_ROOT/
 ## 📊 Comprehensive Project Metrics
 
 - **Python Files Analyzed:** 22
-- **Total Lines of Code:** 1,320
+- **Total Lines of Code:** 1,375
 - **Classes Defined:** 7
 - **Top-Level Functions:** 35
 - **Class Methods:** 21
@@ -112,7 +112,7 @@ PROJECT_ROOT/
 - **downloader** → Used in 3 files
 - **hashlib** → Used in 1 files
 - **json** → Used in 3 files
-- **logging** → Used in 3 files
+- **logging** → Used in 1 files
 - **mimetypes** → Used in 1 files
 - **os** → Used in 7 files
 - **pathlib** → Used in 8 files
@@ -126,7 +126,7 @@ PROJECT_ROOT/
 - **sys** → Used in 3 files
 - **tempfile** → Used in 2 files
 - **time** → Used in 1 files
-- **traceback** → Used in 2 files
+- **traceback** → Used in 3 files
 - **typing** → Used in 2 files
 - **urllib** → Used in 8 files
 - **utils** → Used in 5 files
@@ -568,13 +568,13 @@ merge into AD_HOSTS.
 
 ## 📄 File Analysis: `core/fetcher.py`
 
-**Overview:** 94 lines, complexity: 0 🟢
+**Overview:** 153 lines, complexity: 0 🟢
 
 ### 📦 Import Analysis
 
 **Direct Imports:**
 - `aiohttp`
-- `logging`
+- `traceback`
 
 **From Imports:**
 - `from aiohttp import ClientTimeout, TCPConnector`
@@ -582,29 +582,29 @@ merge into AD_HOSTS.
 
 ### 🏛️ Class Definitions
 
-#### `Fetcher` - lines 7-94
+#### `Fetcher` - lines 10-153
 **Purpose:** Re-usable aiohttp session with adaptive throttle-awareness and cookies.
 Methods:
   fetch_text(url, allow_redirects=True) -> (status, text|None, final_...
 
 **Methods:**
-- `__init__(self, cfg, throttle, cookies: dict)` 🟢 (lines 16-20, complexity: 1)
+- `__init__(self, cfg, throttle, cookies: dict)` 🟢 (lines 19-23, complexity: 1)
 
 ### 🌐 External API Usage
 
 - **aiohttp**: `aiohttp.ClientSession`
-- **logging**: `logging.debug, logging.info`
 - **resp**: `resp.read, resp.text`
+- **traceback**: `traceback.format_exc`
 
 ### 📞 Function Call Graph
 
 *All function calls detected in this file (for AI dependency analysis)*
 
-**Internal calls:** `ClientTimeout, TCPConnector, self._ensure_session, self.session.close, self.session.get, self.session.headers.get, self.throttle.after_response, self.throttle.before_request`
+**Internal calls:** `ClientTimeout, TCPConnector, self._ensure_session, self.session.close, self.session.get, self.throttle.after_response, self.throttle.before_request`
 
-**External API calls:** `aiohttp.ClientSession, logging.debug, logging.info, resp.read, resp.text`
+**External API calls:** `aiohttp.ClientSession, resp.read, resp.text, traceback.format_exc`
 
-**Built-in functions:** `dict, str`
+**Built-in functions:** `dict, print, str, type`
 
 ### 🤖 AI Modification Hints
 
@@ -843,7 +843,7 @@ API:
 
 ## 📄 File Analysis: `crawler/discover.py`
 
-**Overview:** 133 lines, complexity: 0 🟢
+**Overview:** 123 lines, complexity: 0 🟢
 
 **File Purpose:** Phase-1: discover links and save raw HTML.
 
@@ -851,7 +851,6 @@ API:
 
 **Direct Imports:**
 - `asyncio`
-- `logging`
 - `traceback`
 
 **From Imports:**
@@ -867,45 +866,44 @@ API:
 ### 🌐 Global Scope Variables
 
 **Global Variables:**
-- `abs_url` = urljoin(BASE_URL, href) (line 28)
-- `p` = urlparse(_strip_fragment(abs_url)) (line 29)
-- `keys` = {k for k, _ in parse_qsl(p.query)} (line 35)
-- `p` = urlparse(url) (line 42)
-- `src` = _path_plus_query(src_url) (line 52)
-- `dst` = _path_plus_query(dst_url) (line 53)
-- `rel` = url_to_local_path(dst) (line 60)
+- `abs_url` = urljoin(BASE_URL, href) (line 27)
+- `p` = urlparse(_strip_fragment(abs_url)) (line 28)
+- `keys` = {k for k, _ in parse_qsl(p.query)} (line 34)
+- `p` = urlparse(url) (line 41)
+- `src` = _path_plus_query(src_url) (line 51)
+- `dst` = _path_plus_query(dst_url) (line 52)
+- `rel` = url_to_local_path(dst) (line 59)
 
 ### 🏛️ Class Definitions
 
-#### `LinkDiscoverer` - lines 67-133
+#### `LinkDiscoverer` - lines 65-123
 **Purpose:** Worker to fetch raw HTML, save it, discover links.
 
 **Methods:**
-- `__init__(self, cfg, state: State, fetcher, worker_id: int)` 🟢 (lines 72-76, complexity: 1)
+- `__init__(self, cfg, state: State, fetcher, worker_id: int)` 🟢 (lines 70-74, complexity: 1)
 
 ### ⚙️ Top-Level Functions
 
-#### `_strip_fragment(url: str) -> str` 🟢 (lines 21-22, complexity: 1)
+#### `_strip_fragment(url: str) -> str` 🟢 (lines 20-21, complexity: 1)
 - 🔗 Function calls: `url.split`
 
-#### `_is_valid_link(href: str) -> bool` 🟡 (lines 25-38, complexity: 7)
+#### `_is_valid_link(href: str) -> bool` 🟡 (lines 24-37, complexity: 7)
 - 🔗 Function calls: `_strip_fragment, any, href.startswith, p.path.startswith, parse_qsl, urljoin, urlparse`
 - 📊 Local variables: `abs_url, p, keys`
 
-#### `_path_plus_query(url: str) -> str` 🟢 (lines 41-43, complexity: 1)
+#### `_path_plus_query(url: str) -> str` 🟢 (lines 40-42, complexity: 1)
 - 🔗 Function calls: `urlparse`
 - 📊 Local variables: `p`
 
-#### `async handle_redirect(worker_id: int, src_url: str, dst_url: str, state: State) -> bool` 🟢 (lines 46-64, complexity: 4)
+#### `async handle_redirect(worker_id: int, src_url: str, dst_url: str, state: State) -> bool` 🟢 (lines 45-62, complexity: 4)
 **Purpose:** Record an internal redirect and enqueue the destination.
-- 🔗 Function calls: `_path_plus_query, logging.info, print, redirects.add, state.add_url, state.mark_redirect_source, url_to_local_path, urlparse`
+- 🔗 Function calls: `_path_plus_query, print, redirects.add, state.add_url, state.mark_redirect_source, url_to_local_path, urlparse`
 - 📊 Local variables: `src, dst, rel`
 
 ### 🌐 External API Usage
 
 - **asyncio**: `asyncio.sleep`
 - **href**: `href.startswith`
-- **logging**: `logging.debug, logging.error, logging.info`
 - **p**: `p.path.startswith`
 - **redirects**: `redirects.add`
 - **soup**: `soup.find_all`
@@ -920,7 +918,7 @@ API:
 **Internal calls:** `BeautifulSoup, _is_valid_link, _path_plus_query, _strip_fragment, handle_redirect, parse_qsl, safe_file_write, self._parse_links, self._process, self.fetcher.fetch_text, self.state.add_url, self.state.get_next, self.state.mark_discovered, self.state.update_after_fetch, url_to_local_path`
  (+2 more)
 
-**External API calls:** `asyncio.sleep, href.startswith, logging.debug, logging.error, logging.info, p.path.startswith, redirects.add, soup.find_all, state.add_url, state.mark_redirect_source, traceback.print_exc, url.split`
+**External API calls:** `asyncio.sleep, href.startswith, p.path.startswith, redirects.add, soup.find_all, state.add_url, state.mark_redirect_source, traceback.print_exc, url.split`
 
 **Built-in functions:** `any, print`
 
@@ -932,7 +930,7 @@ API:
 
 ## 📄 File Analysis: `crawler/scheduler.py`
 
-**Overview:** 27 lines, complexity: 0 🟢
+**Overview:** 30 lines, complexity: 0 🟢
 
 **File Purpose:** Orchestrate discovery and download phases.
 
@@ -942,23 +940,23 @@ API:
 - `asyncio`
 
 **From Imports:**
-- `from crawler.discover import LinkDiscoverer`
-- `from downloader.workers import DownloadWorker`
+- `from crawler.discover import LinkDiscoverer, LinkDiscoverer`
+- `from downloader.workers import DownloadWorker, DownloadWorker`
 
 ### 🌐 Global Scope Variables
 
 **Global Variables:**
 - `tasks` = [asyncio.create_task(LinkDiscoverer(cfg, state, fetcher, 1).run())] (line 12)
 - `n` = len(tasks) + 1 (line 16)
-- `workers` = [DownloadWorker(cfg, state, fetcher, wid=i + 1) for i in range(cfg.workers)] (line 24)
+- `workers` = [DownloadWorker(cfg, state, fetcher, wid=i + 1) for i in range(cfg.workers)] (line 27)
 
 ### ⚙️ Top-Level Functions
 
-#### `async run_discovery_phase(cfg, state, fetcher)` 🟢 (lines 11-20, complexity: 4)
+#### `async run_discovery_phase(cfg, state, fetcher)` 🟢 (lines 8-20, complexity: 4)
 - 🔗 Function calls: `LinkDiscoverer, LinkDiscoverer(cfg, state, fetcher, 1).run, LinkDiscoverer(cfg, state, fetcher, n).run, asyncio.create_task, asyncio.gather, asyncio.sleep, len, state.pending_count` (+2 more)
 - 📊 Local variables: `tasks, n`
 
-#### `async run_download_phase(cfg, state, fetcher)` 🟢 (lines 23-27, complexity: 1)
+#### `async run_download_phase(cfg, state, fetcher)` 🟢 (lines 23-30, complexity: 1)
 - 🔗 Function calls: `DownloadWorker, asyncio.create_task, asyncio.gather, range, w.run`
 - 📊 Local variables: `workers`
 
@@ -1051,7 +1049,7 @@ API:
 
 ## 📄 File Analysis: `downloader/workers.py`
 
-**Overview:** 47 lines, complexity: 0 🟢
+**Overview:** 50 lines, complexity: 0 🟢
 
 **File Purpose:** Phase-2: fetch HTML, rewrite via processor, save final.
 
@@ -1070,9 +1068,9 @@ API:
 
 ### 🏛️ Class Definitions
 
-#### `DownloadWorker` - lines 15-47
+#### `DownloadWorker` - lines 14-50
 **Methods:**
-- `__init__(self, cfg, state: State, fetcher, wid, progress)` 🟢 (lines 16-21, complexity: 1)
+- `__init__(self, cfg, state: State, fetcher, wid, progress)` 🟢 (lines 15-20, complexity: 1)
 
 ### 🌐 External API Usage
 
@@ -1574,7 +1572,7 @@ Auto-cleaned by pytest.
 - **item['docstring']**: 1 calls - `item['docstring'].splitlines`
 - **json**: 4 calls - `json.dump, json.dumps, json.load, json.loads`
 - **link**: 2 calls - `link.decompose, link.get`
-- **logging**: 5 calls - `logging.StreamHandler, logging.basicConfig, logging.debug, logging.error, logging.info`
+- **logging**: 2 calls - `logging.StreamHandler, logging.basicConfig`
 - **m**: 2 calls - `m.group, m.group(1).lower`
 - **mgr**: 1 calls - `mgr.fetch`
 - **mimetypes**: 1 calls - `mimetypes.guess_extension`
@@ -1612,7 +1610,7 @@ Auto-cleaned by pytest.
 - **tasks[0]**: 1 calls - `tasks[0].done`
 - **tempfile**: 1 calls - `tempfile.mkstemp`
 - **time**: 1 calls - `time.time`
-- **traceback**: 1 calls - `traceback.print_exc`
+- **traceback**: 2 calls - `traceback.format_exc, traceback.print_exc`
 - **txt**: 1 calls - `txt.splitlines`
 - **url**: 2 calls - `url.encode, url.split`
 - **urlparse(forum_url)**: 1 calls - `urlparse(forum_url).netloc.lower`
@@ -1628,7 +1626,7 @@ Auto-cleaned by pytest.
 
 ## 📋 Report Generation Metadata
 
-- **Generated on:** 2025-06-27 00:37:37
+- **Generated on:** 2025-06-27 01:52:50
 - **Script version:** AI Code Mapper v2.0
 - **Analysis root:** `C:\Users\Sammu\O meu disco\Código\Forum_Backup`
 - **Files analyzed:** 22

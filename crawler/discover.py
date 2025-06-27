@@ -5,9 +5,6 @@ Phase-1: discover links and save raw HTML.
 from __future__ import annotations
 
 import asyncio
-
-# log
-import logging
 import traceback
 from urllib.parse import parse_qsl, urljoin, urlparse
 
@@ -61,8 +58,7 @@ async def handle_redirect(
     state.mark_redirect_source(src)
     rel = url_to_local_path(dst)
     state.add_url(dst, rel)
-    # print(f"[Redirect] {src} → {dst}")
-    logging.info("[Redirect] %s → %s", src, dst)
+    print(f"[Redirect] {src} → {dst}")
     return True
 
 
@@ -80,7 +76,7 @@ class LinkDiscoverer:
     async def run(self):
         idle = 0
         while True:
-            path = self.state.get_next("discover")
+            path = await self.state.get_next("discover")
             if not path:
                 idle += 1
                 if idle > 15:
@@ -100,22 +96,14 @@ class LinkDiscoverer:
                 self.id, url, final, self.state
             ):
                 return
-
             if status != 200 or not html:
-                import logging
-
-                logging.error("[D%s] %s  -> HTTP %s", self.id, path, status)
                 self.state.update_after_fetch(path, False, f"HTTP {status}")
                 return
-
             rel_path = url_to_local_path(path)
             await safe_file_write(rel_path, html)
-
             count = await self._parse_links(html)
             self.state.mark_discovered(path)
-            # print(f"[D{self.id}] {path} → +{count} links")
-            logging.debug("[D%s] %s → +%s links", self.id, path, count)
-
+            print(f"[D{self.id}] {path} → +{count} links")
         except Exception:
             traceback.print_exc()
             self.state.update_after_fetch(path, False, "discover error")

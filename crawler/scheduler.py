@@ -4,11 +4,11 @@ Orchestrate discovery and download phases.
 
 import asyncio
 
-from crawler.discover import LinkDiscoverer
-from downloader.workers import DownloadWorker
-
 
 async def run_discovery_phase(cfg, state, fetcher):
+    # Import inside the function to avoid circular import
+    from crawler.discover import LinkDiscoverer
+
     tasks = [asyncio.create_task(LinkDiscoverer(cfg, state, fetcher, 1).run())]
     while not tasks[0].done():
         await asyncio.sleep(1)
@@ -21,6 +21,9 @@ async def run_discovery_phase(cfg, state, fetcher):
 
 
 async def run_download_phase(cfg, state, fetcher):
+    # Import inside the function to avoid circular import
+    from downloader.workers import DownloadWorker  # Fixed import path
+
     workers = [
         DownloadWorker(cfg, state, fetcher, wid=i + 1) for i in range(cfg.workers)
     ]

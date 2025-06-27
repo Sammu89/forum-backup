@@ -120,21 +120,21 @@
 
 ## `core\fetcher.py`
 
-- **class** `Fetcher` (line 7)
+- **class** `Fetcher` (line 10)
   Re-usable aiohttp session with adaptive throttle-awareness and cookies.
   Methods:
     fetch_text(url, allow_redirects=True) -> (status, text|None, final_url)
     fetch_bytes(url)                     -> (status, bytes|None)
     close()                              -> closes session
-- **function** `__init__(self, cfg, throttle, cookies)` (line 16)
+- **function** `__init__(self, cfg, throttle, cookies)` (line 19)
   *(no docstring)*
-- **function** `_ensure_session(self)` (line 22)
+- **function** `_ensure_session(self)` (line 29)
   *(no docstring)*
-- **function** `fetch_text(self, url, allow_redirects)` (line 38)
+- **function** `fetch_text(self, url, allow_redirects)` (line 49)
   Fetch text content from URL. Returns (status, text, final_url).
-- **function** `fetch_bytes(self, url)` (line 72)
+- **function** `fetch_bytes(self, url)` (line 114)
   Fetch binary content. Returns (status, data).
-- **function** `close(self)` (line 91)
+- **function** `close(self)` (line 150)
   Close the aiohttp session.
 
 ## `core\pathutils.py`
@@ -213,28 +213,28 @@
 
 ## `crawler\discover.py`
 
-- **function** `_strip_fragment(url)` (line 21)
+- **function** `_strip_fragment(url)` (line 20)
   *(no docstring)*
-- **function** `_is_valid_link(href)` (line 25)
+- **function** `_is_valid_link(href)` (line 24)
   *(no docstring)*
-- **function** `_path_plus_query(url)` (line 41)
+- **function** `_path_plus_query(url)` (line 40)
   *(no docstring)*
-- **function** `handle_redirect(worker_id, src_url, dst_url, state)` (line 46)
+- **function** `handle_redirect(worker_id, src_url, dst_url, state)` (line 45)
   Record an internal redirect and enqueue the destination.
-- **class** `LinkDiscoverer` (line 67)
+- **class** `LinkDiscoverer` (line 65)
   Worker to fetch raw HTML, save it, discover links.
-- **function** `__init__(self, cfg, state, fetcher, worker_id)` (line 72)
+- **function** `__init__(self, cfg, state, fetcher, worker_id)` (line 70)
   *(no docstring)*
-- **function** `run(self)` (line 78)
+- **function** `run(self)` (line 76)
   *(no docstring)*
-- **function** `_process(self, path)` (line 91)
+- **function** `_process(self, path)` (line 89)
   *(no docstring)*
-- **function** `_parse_links(self, html)` (line 121)
+- **function** `_parse_links(self, html)` (line 111)
   *(no docstring)*
 
 ## `crawler\scheduler.py`
 
-- **function** `run_discovery_phase(cfg, state, fetcher)` (line 11)
+- **function** `run_discovery_phase(cfg, state, fetcher)` (line 8)
   *(no docstring)*
 - **function** `run_download_phase(cfg, state, fetcher)` (line 23)
   *(no docstring)*
@@ -252,13 +252,13 @@
 
 ## `downloader\workers.py`
 
-- **class** `DownloadWorker` (line 15)
+- **class** `DownloadWorker` (line 14)
   *(no docstring)*
-- **function** `__init__(self, cfg, state, fetcher, wid, progress)` (line 16)
+- **function** `__init__(self, cfg, state, fetcher, wid, progress)` (line 15)
   *(no docstring)*
-- **function** `run(self)` (line 23)
+- **function** `run(self)` (line 22)
   *(no docstring)*
-- **function** `_process(self, path)` (line 30)
+- **function** `_process(self, path)` (line 29)
   *(no docstring)*
 
 ## `processor\orchestrator.py`

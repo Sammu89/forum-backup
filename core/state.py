@@ -31,12 +31,16 @@ class State:
                 self.urls = json.load(f)
         except (json.JSONDecodeError, IOError):
             self.urls = {}
+        if not os.path.exists(self.state_path):
+            await self.save()
         # load assets
         try:
             with open(self.cache_path, "r", encoding="utf-8") as f:
                 self.assets = json.load(f)
         except (json.JSONDecodeError, IOError):
             self.assets = {}
+        if not os.path.exists(self.state_path):
+            await self.save()
 
     async def save(self):
         async with self._lock:
@@ -56,13 +60,24 @@ class State:
         if path in self.urls:
             return
         self.urls[path] = [rel, 0, "l", 0, ""]
+        import asyncio
 
-    def get_next(self, phase: str) -> str | None:
-        # phase="discover" -> status "l"; "download"->"d"
+        asyncio.create_task(self.save())
+
+    async def get_next(self, phase: str) -> str | None:
+        """
+        Reserva e devolve uma URL:
+          - discover → 'l' → muda para 'd'
+          - download  → 'd' → muda para 'p'
+        """
         want = "l" if phase == "discover" else "d"
-        for k, v in self.urls.items():
-            if v[STA] == want:
-                return k
+        async with self._lock:
+            for path, rec in self.urls.items():
+                if rec[STA] == want:
+                    # reserva imediatamente
+                    rec[STA] = "d" if phase == "discover" else "p"
+                    await self.save()
+                    return path
         return None
 
     def pending_count(self) -> int:

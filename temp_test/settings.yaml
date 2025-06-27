@@ -1,0 +1,21 @@
+folder_mapping:
+  f: categorias
+  t: topicos
+  u: users
+  g: grupos
+  admin: admin
+  privmsg: privmsg
+  profile: profile
+
+ignored_prefixes: ["/admin", "/modcp", "/profile"]
+blacklist_params: ["vote","mode","friend","foe","profil_tabs"]
+
+max_asset_kb: null       # null = unlimited
+slug_max_len: 120
+
+ad_hosts: []             # merged with StevenBlack list
+tracker_patterns: []
+
+ad_sources:
+  - url: https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
+    cache_days: 7
